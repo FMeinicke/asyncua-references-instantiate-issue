@@ -16,12 +16,13 @@ async def load_nodesets(server: Server) -> tuple:
     await server.import_xml(nodeset_dir.joinpath("Opc.Ua.Di.v1.05.03.NodeSet2.xml"))
     opc_ua_di_ns = await server.get_namespace_index("http://opcfoundation.org/UA/DI/")
 
+    uamodeler_dir = Path(__file__).parent.joinpath("UaModeler")
     _logger.info("Patching example nodeset...")
     # We need to patch the `Version` and `PublicationDate` of the required UA nodeset in the exported nodeset of our
     # model because asyncua does not yet ship with the most recent v1.05.03 version and therefore we wouldn't be
     # able to import our model. UaModeler does not allow to change the base UA nodeset and thus always exports our
     # model with the required version set to v1.05.02 and the publication date set to 2022-11-01.
-    nodeset2_path = nodeset_dir.joinpath("asyncua-references-instantiate-issue.xml")
+    nodeset2_path = uamodeler_dir.joinpath("asyncua-references-instantiate-issue.xml")
     nodeset2_xml_root = ET.parse(nodeset2_path).getroot()
     # http://xpather.com/bzitxYfG
     required_model_node = nodeset2_xml_root.find(
